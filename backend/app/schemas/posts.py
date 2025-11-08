@@ -8,4 +8,3 @@ class PostBase(BaseModel):
 
 class PostRead(PostBase):
     id:UUID
-
