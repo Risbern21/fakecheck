@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { motion } from 'motion/react';
-import { Link2, FileText, Image, Music, Loader2, Upload as UploadIcon } from 'lucide-react';
+import { Link2, FileText, Image, Loader2, Upload as UploadIcon } from 'lucide-react';
 import { Button } from './ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from './ui/tabs';
 import { Input } from './ui/input';
@@ -12,12 +12,11 @@ interface UploadPageProps {
 }
 
 export function UploadPage({ onUpload }: UploadPageProps) {
-  const [activeTab, setActiveTab] = useState<'url' | 'text' | 'image' | 'audio'>('url');
+  const [activeTab, setActiveTab] = useState<'url' | 'text' | 'image'>('url');
   const [title, setTitle] = useState('');
   const [urlInput, setUrlInput] = useState('');
   const [textInput, setTextInput] = useState('');
   const [imageFile, setImageFile] = useState<File | null>(null);
-  const [audioFile, setAudioFile] = useState<File | null>(null);
   const [isUploading, setIsUploading] = useState(false);
 
   const handleUpload = async () => {
@@ -32,8 +31,6 @@ export function UploadPage({ onUpload }: UploadPageProps) {
       content = imageFile.name;
       // In a real app, you'd upload the image and get a URL
       imageUrl = URL.createObjectURL(imageFile);
-    } else if (activeTab === 'audio' && audioFile) {
-      content = audioFile.name;
     } else {
       return;
     }
@@ -50,26 +47,20 @@ export function UploadPage({ onUpload }: UploadPageProps) {
     setUrlInput('');
     setTextInput('');
     setImageFile(null);
-    setAudioFile(null);
     setIsUploading(false);
   };
 
-  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>, type: 'image' | 'audio') => {
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
-      if (type === 'image') {
-        setImageFile(file);
-      } else {
-        setAudioFile(file);
-      }
+      setImageFile(file);
     }
   };
 
   const canUpload = title.trim() && (
     (activeTab === 'url' && urlInput.trim()) ||
     (activeTab === 'text' && textInput.trim()) ||
-    (activeTab === 'image' && imageFile) ||
-    (activeTab === 'audio' && audioFile)
+    (activeTab === 'image' && imageFile)
   );
 
   return (
@@ -96,7 +87,7 @@ export function UploadPage({ onUpload }: UploadPageProps) {
             <CardHeader>
               <CardTitle>Verify Content</CardTitle>
               <CardDescription>
-                Upload URLs, text, images, or audio files for AI-powered credibility analysis
+                Upload URLs, text, or images for AI-powered credibility analysis
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-6">
@@ -116,7 +107,7 @@ export function UploadPage({ onUpload }: UploadPageProps) {
 
               {/* Content Type Tabs */}
               <Tabs value={activeTab} onValueChange={(v) => setActiveTab(v as any)}>
-                <TabsList className="grid w-full grid-cols-4">
+                <TabsList className="grid w-full grid-cols-3">
                   <TabsTrigger value="url" className="flex items-center gap-2">
                     <Link2 className="size-4" />
                     <span className="hidden sm:inline">URL</span>
@@ -128,10 +119,6 @@ export function UploadPage({ onUpload }: UploadPageProps) {
                   <TabsTrigger value="image" className="flex items-center gap-2">
                     <Image className="size-4" />
                     <span className="hidden sm:inline">Image</span>
-                  </TabsTrigger>
-                  <TabsTrigger value="audio" className="flex items-center gap-2">
-                    <Music className="size-4" />
-                    <span className="hidden sm:inline">Audio</span>
                   </TabsTrigger>
                 </TabsList>
 
@@ -169,7 +156,7 @@ export function UploadPage({ onUpload }: UploadPageProps) {
                     <input
                       type="file"
                       accept="image/*"
-                      onChange={(e) => handleFileChange(e, 'image')}
+                      onChange={handleFileChange}
                       className="hidden"
                       id="image-upload"
                       disabled={isUploading}
@@ -197,49 +184,6 @@ export function UploadPage({ onUpload }: UploadPageProps) {
                           </p>
                           <p className="text-gray-500 dark:text-gray-400">
                             PNG, JPG, or WEBP
-                          </p>
-                        </>
-                      )}
-                    </label>
-                  </div>
-                </TabsContent>
-
-                <TabsContent value="audio" className="space-y-2 mt-4">
-                  <label className="text-gray-900 dark:text-white">
-                    Audio File
-                  </label>
-                  <div className="border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-lg p-12 text-center hover:border-green-500 dark:hover:border-green-500 transition-colors">
-                    <input
-                      type="file"
-                      accept="audio/*"
-                      onChange={(e) => handleFileChange(e, 'audio')}
-                      className="hidden"
-                      id="audio-upload"
-                      disabled={isUploading}
-                    />
-                    <label
-                      htmlFor="audio-upload"
-                      className="cursor-pointer flex flex-col items-center gap-3"
-                    >
-                      <div className="bg-green-100 dark:bg-green-900/30 p-4 rounded-full">
-                        <Music className="size-8 text-green-600 dark:text-green-500" />
-                      </div>
-                      {audioFile ? (
-                        <div>
-                          <p className="text-gray-900 dark:text-white mb-1">
-                            {audioFile.name}
-                          </p>
-                          <p className="text-gray-500 dark:text-gray-400">
-                            Click to change
-                          </p>
-                        </div>
-                      ) : (
-                        <>
-                          <p className="text-gray-900 dark:text-white">
-                            Click to upload audio
-                          </p>
-                          <p className="text-gray-500 dark:text-gray-400">
-                            MP3, WAV, or M4A
                           </p>
                         </>
                       )}
