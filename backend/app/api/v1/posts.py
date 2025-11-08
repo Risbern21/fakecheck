@@ -12,8 +12,9 @@ from app.db.session import get_db
 router = APIRouter(prefix="/posts",tags=["posts"])
 
 @router.post("/")
-def create_post(post:PostBase,    current_user: User = Depends(get_current_user),
-db:Session = Depends(get_db)):
+def create_post(post:PostBase,
+                current_user: User = Depends(get_current_user),
+                db:Session = Depends(get_db)):
     pass
 
 @router.get("/")
