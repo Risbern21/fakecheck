@@ -2,7 +2,7 @@ from fastapi import APIRouter, Depends, HTTPException, status
 from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
 from sqlalchemy.orm import Session
 
-# from app.crud import auth as crud_auth
+from app.crud import auth as crud_auth
 from app.db.session import get_db
 from app.models.users import User
 from app.schemas.token import Token
@@ -20,19 +20,17 @@ def login_for_access_token(
     form_data: OAuth2PasswordRequestForm = Depends(),
     db: Session = Depends(get_db),
 ):
-    # user = crud_auth.authenticate_user(
-    #     db, form_data.username, form_data.password
-    # )
-    # if not user:
-    #     raise HTTPException(
-    #         status_code=status.HTTP_401_UNAUTHORIZED,
-    #         detail="incorrect username or password",
-    #         headers={"WWW-headers": "Bearer"},
-    #     )
-    # access_token = crud_auth.create_token_for_user(user)
-    # return {"access_token": access_token, "token_type": "bearer"}
-    pass
-
+    user = crud_auth.authenticate_user(
+        db, form_data.username, form_data.password
+    )
+    if not user:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="incorrect username or password",
+            headers={"WWW-headers": "Bearer"},
+        )
+    access_token = crud_auth.create_token_for_user(user)
+    return {"access_token": access_token, "token_type": "bearer"}
 
 # user exchanges token for his creds
 def get_current_user(

@@ -14,3 +14,6 @@ class UserRead(UserBase):
 
     class Config:
         orm_mode=True
+        
+class UserUpdate(BaseModel):
+    hashed_password:str

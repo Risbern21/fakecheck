@@ -14,4 +14,4 @@ class Analysis(Base):
     id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
     user_id = Column(UUID, ForeignKey(User.id, ondelete="CASCADE"))
     post_id = Column(UUID, ForeignKey(Post.id, ondelete="CASCADE"))
-    creadibility_score = Column(Integer)
+    credibility_score = Column(Integer)
